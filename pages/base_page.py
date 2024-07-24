@@ -3,10 +3,12 @@ from selenium.webdriver.support.wait import WebDriverWait as WDWait
 from selenium.webdriver.common.by import By
 from seletools.actions import drag_and_drop
 
+from locators.account_profile_page_locators import AccountProfilePageLocators
+
 
 class BasePage:
     DEFAULT_TIMEOUT = 10
-    MODAL_WAIT_WINDOW = By.XPATH, "//*[@alt='loading animation']/parent::div"
+
 
     def __init__(self, web_drv):
         self.web_drv = web_drv
@@ -16,7 +18,7 @@ class BasePage:
         return self.web_drv.current_url
 
     def wait_loading(self, timeout=DEFAULT_TIMEOUT):
-        WDWait(self.web_drv, timeout).until(ec.invisibility_of_element(self.MODAL_WAIT_WINDOW))
+        WDWait(self.web_drv, timeout).until(ec.invisibility_of_element(AccountProfilePageLocators.MODAL_WAIT_WINDOW))
 
     def open_page(self, url):
         self.web_drv.get(url)
@@ -36,13 +38,15 @@ class BasePage:
         WDWait(self.web_drv, timeout).until(ec.invisibility_of_element(locator))
 
     def get_attribute_element(self, locator, attribute, timeout=DEFAULT_TIMEOUT):
-        return WDWait(self.web_drv, timeout).until(ec.visibility_of_element_located(locator)).get_attribute(attribute)
+        self.wait_visible_element(locator, timeout)
+        return self.web_drv.find_element(*locator).get_attribute(attribute)
 
     def get_element(self, locator):
         return self.web_drv.find_element(*locator)
 
     def get_visible_element(self,  locator, timeout=DEFAULT_TIMEOUT):
-        return WDWait(self.web_drv, timeout).until((ec.visibility_of_element_located(locator)))
+        self.wait_visible_element(locator, timeout)
+        return self.web_drv.find_element(*locator)
 
     def get_visible_elements(self, locator, timeout=DEFAULT_TIMEOUT):
         return WDWait(self.web_drv, timeout).until((ec.visibility_of_all_elements_located(locator)))

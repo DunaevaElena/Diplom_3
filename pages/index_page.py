@@ -58,3 +58,10 @@ class IndexPage(BasePage):
     def get_counter_ingredient_by_index_(self, index):
         counters = self.get_visible_elements(IndexPageLocators.LIST_COUNTERS_OF_INGREDIENTS)
         return int(counters[index].text)
+
+    @allure.step('Создание заказа')
+    def create_order(self):
+        self.add_ingredient_to_order_by_index(1)
+        self.add_ingredient_to_order_by_index(4)
+        self.click_button_place_order()
+        self.click_cross_button_in_popup_window()
